@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Articles - The AI Bulletin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        gray: {
+          950: '#020202',
+          900: '#070707',
+          850: '#0a0a0a',
+          800: '#101010',
+          750: '#151515',
+          700: '#181818',
+          600: '#222222',
+          500: '#444444',
+          400: '#8c8c8c',
+          300: '#c8c8c8',
+          200: '#e1e1e1',
+          100: '#f5f5f5'
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Outfit', 'sans-serif']
+      }
+    }
+  }
+}</script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card-enter {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: cardIn 0.4s ease forwards;
+    }
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .tag-pill { background: #f97316; color: #000; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; display: inline-block; border-radius: 0.25rem; }
+    .filter-btn { border: 1px solid #181818; background: #070707; color: #9ca3af; padding: 6px 16px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; border-radius: 0.25rem; }
+    .filter-btn:hover, .filter-btn.active { background: #f97316; color: #000; border-color: #f97316; }
+  </style>
+</head>
+<body class="bg-black text-gray-100 font-sans antialiased pt-16">
+
+  <nav class="fixed w-full top-0 left-0 z-50 bg-black/70 backdrop-blur-xl border-b border-neutral-900 shadow-xl shadow-black/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center gap-6">
+        <div class="flex items-center gap-10 shrink-0">
+          <a href="index.html" class="flex items-center gap-2 group">
+            <span class="text-xl sm:text-2xl font-black logo-brand tracking-widest uppercase text-white transition-colors duration-300">THE AI <span class="text-orange-500">BULLETIN</span></span>
+          </a>
+          <div class="hidden md:flex items-center gap-8 text-xs font-black uppercase tracking-widest text-neutral-400">
+            <a href="index.html" class="hover:text-orange-500 hover:scale-[1.02] active:scale-[0.98] transition-all">Front Page</a>
+            <a href="articles.html" class="hover:text-orange-500 hover:scale-[1.02] active:scale-[0.98] transition-all">Archives</a>
+          </div>
+        </div>
+        <form class="search-form flex-1 max-w-md hidden lg:block" action="articles.html" method="GET">
+          <div class="relative">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" fill="none"
+              stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input type="text" name="search" placeholder="Search archives..."
+              class="w-full bg-neutral-950/60 border border-neutral-900 focus:border-orange-500/80 focus:ring-1 focus:ring-orange-500 pl-11 pr-4 py-2 text-xs outline-none transition-all text-white placeholder-neutral-500 rounded font-sans">
+          </div>
+        </form>
+        <div class="flex items-center gap-4">
+          <div id="nav-auth-links" class="hidden sm:flex items-center gap-4"></div>
+          <button id="mobile-menu-btn"
+            class="lg:hidden w-10 h-10 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900/50 rounded transition-all active:scale-[0.95]">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden border-t border-neutral-900 bg-neutral-950/95 backdrop-blur-lg px-4 py-6 space-y-4">
+      <form class="search-form relative" action="articles.html" method="GET">
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" name="search" placeholder="Search..." class="w-full bg-black border border-neutral-900 text-white placeholder-neutral-500 pl-11 pr-4 py-2.5 text-xs outline-none transition-all focus:border-orange-500 rounded font-sans">
+      </form>
+      <div class="flex flex-col gap-1 font-black uppercase tracking-widest text-xs text-neutral-400">
+        <a href="index.html" class="hover:text-orange-500 transition-colors py-2.5 px-2 rounded hover:bg-neutral-900/50">Front Page</a>
+        <a href="articles.html" class="hover:text-orange-500 transition-colors py-2.5 px-2 rounded hover:bg-neutral-900/50">Archives</a>
+        <div id="mobile-auth-links" class="flex flex-col gap-2 pt-2 border-t border-neutral-900"></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="min-h-screen pt-28 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="border-b border-gray-800 pb-6 mb-8">
+      <h1 id="page-title" class="text-5xl md:text-7xl font-serif font-black text-white tracking-tight uppercase leading-none">The Archives</h1>
+      <p id="page-desc" class="text-lg font-serif text-gray-500 mt-3">Our complete collection of investigative reports and deep dives.</p>
+    </div>
+
+    <div class="mb-8 flex gap-3 items-center">
+      <div class="relative flex-1 max-w-lg">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="search-input" type="text" placeholder="" class="w-full bg-gray-800 border border-gray-700 focus:bg-black focus:border-orange-500 pl-10 pr-4 py-3 text-sm outline-none transition-all rounded-md">
+      </div>
+      <button id="search-btn" class="bg-orange-500 text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-orange-600 transition-colors rounded-md">Search</button>
+      <button id="clear-btn" class="hidden border border-gray-700 text-gray-300 px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors rounded-md">Clear</button>
+    </div>
+
+    <div id="tag-filters" class="flex flex-wrap gap-2 mb-10"></div>
+
+    <div id="results-info" class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-6"></div>
+
+    <div id="articles-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full flex justify-center py-16">
+        <div class="w-10 h-10 border-2 border-gray-800 border-t-orange-500 animate-spin"></div>
+      </div>
+    </div>
+
+    <div id="load-more-wrap" class="hidden mt-12 text-center">
+      <button id="load-more-btn" class="border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-10 py-3 text-sm font-bold uppercase tracking-wider transition-all rounded-md">Load More Reports</button>
+    </div>
+  </div>
+
+  <footer class="bg-black text-white pt-8 pb-0 border-t border-gray-900 flex flex-col gap-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 w-full">
+      <span class="text-xl logo-brand text-white">THE AI <span class="text-orange-500">BULLETIN</span></span>
+      <div class="flex gap-6 text-sm text-gray-400">
+        <a href="index.html" class="hover:text-white">Front Page</a>
+        <a href="articles.html" class="hover:text-white">Archives</a>
+        <a href="admin-login.html" class="hover:text-white">Admin</a>
+      </div>
+    </div>
+
+    <div class="relative w-full flex flex-col items-center justify-center bg-black">
+      <div class="relative w-full select-none leading-none flex justify-center">
+        <svg viewBox="0 0 1200 150" class="w-full max-w-7xl mx-auto h-auto uppercase">
+          <text x="50%" y="130" text-anchor="middle" font-size="140" font-family="'Syncopate', sans-serif"
+            font-weight="900" fill="none" stroke-width="0.7" textLength="1200" lengthAdjust="spacingAndGlyphs">
+            <tspan stroke="#f97316" fill="#f97316">AI </tspan>
+            <tspan stroke="#f97316">BULLETIN</tspan>
+          </text>
+        </svg>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    let allArticles = [];
+    let displayedCount = 0;
+    const PAGE_SIZE = 9;
+    let activeTag = null;
+    let searchQuery = '';
+
+    function renderCard(article, delay = 0) {
+      const fallback = "this.style.display='none';this.nextElementSibling.style.display='flex'";
+      const tag = article.tags?.[0] || 'News';
+      const desc = article.metaDescription || article.content?.substring(0,120).replace(/<[^>]+>/g,'') || '';
+      return `
+        <div class="card-enter card-hover" style="animation-delay:${delay}ms">
+          <a href="article.html?slug=${article.slug}" class="block group h-full">
+            <div class="flex flex-col h-full border border-gray-800 bg-black group-hover:border-gray-800 transition-colors">
+              <div class="relative h-48 overflow-hidden border-b border-gray-800">
+                ${article.image
+                  ? `<img src="${article.image}" loading="lazy" onerror="${fallback}" class="w-full h-full object-cover transition-all duration-500">
+                     <div class="hidden w-full h-full bg-gray-800 flex items-center justify-center text-xs text-gray-400 font-bold uppercase">No Image</div>`
+                  : `<div class="w-full h-full bg-gray-800 flex items-center justify-center text-xs text-gray-400 font-bold uppercase tracking-wider">No Image</div>`
+                }
+                <span class="tag-pill absolute top-3 left-3">${tag}</span>
+              </div>
+              <div class="p-5 flex flex-col flex-grow">
+                <h3 class="font-serif font-bold text-lg text-white leading-snug line-clamp-3 mb-2 group-hover:text-gray-400 transition-colors">${article.title}</h3>
+                <p class="text-gray-500 text-sm font-serif line-clamp-2 flex-grow leading-relaxed">${desc}</p>
+                <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-800 text-xs font-bold uppercase tracking-wider text-gray-400">
+                  <span>${formatDate(article.createdAt)}</span>
+                  <span>${article.readingTime} min</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>`;
+    }
+
+    function getFiltered() {
+      return allArticles.filter(a => {
+        const matchTag = activeTag ? (a.tags||[]).includes(activeTag) : true;
+        const matchSearch = searchQuery
+          ? a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (a.content||'').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (a.metaDescription||'').toLowerCase().includes(searchQuery.toLowerCase())
+          : true;
+        return matchTag && matchSearch;
+      });
+    }
+
+    function render() {
+      const filtered = getFiltered();
+      const container = document.getElementById('articles-container');
+      const toShow = filtered.slice(0, displayedCount);
+
+      document.getElementById('results-info').textContent =
+        `Showing ${toShow.length} of ${filtered.length} report${filtered.length !== 1 ? 's' : ''}${searchQuery ? ` for "${searchQuery}"` : ''}${activeTag ? ` in "${activeTag}"` : ''}`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-24 bg-black border border-gray-800">
+            <div class="w-20 h-20 bg-black border-2 border-gray-800 flex items-center justify-center mx-auto mb-6">
+              <span class="text-4xl font-serif text-white">?</span>
+            </div>
+            <h3 class="text-2xl font-serif font-black uppercase tracking-tight mb-2">No Records Found</h3>
+            <p class="text-gray-500 font-serif">Try a different keyword or remove the active filter.</p>
+          </div>`;
+        document.getElementById('load-more-wrap').classList.add('hidden');
+        return;
+      }
+
+      container.innerHTML = toShow.map((a, i) => renderCard(a, i * 60)).join('');
+
+      const loadMore = document.getElementById('load-more-wrap');
+      if (displayedCount < filtered.length) {
+        loadMore.classList.remove('hidden');
+      } else {
+        loadMore.classList.add('hidden');
+      }
+    }
+
+    function buildTagFilters(articles) {
+      const tagCount = {};
+      articles.forEach(a => (a.tags||[]).forEach(t => { tagCount[t] = (tagCount[t]||0)+1; }));
+      const sorted = Object.entries(tagCount).sort((a,b)=>b[1]-a[1]).slice(0,12);
+      const container = document.getElementById('tag-filters');
+      container.innerHTML = `<button class="filter-btn active" data-tag="">All</button>` +
+        sorted.map(([t,c]) => `<button class="filter-btn" data-tag="${t}">${t} (${c})</button>`).join('');
+      container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeTag = btn.dataset.tag || null;
+          container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          displayedCount = PAGE_SIZE;
+          render();
+        });
+      });
+    }
+
+    function doSearch(q) {
+      searchQuery = q.trim();
+      displayedCount = PAGE_SIZE;
+
+      const clearBtn = document.getElementById('clear-btn');
+      if (searchQuery) {
+        clearBtn.classList.remove('hidden');
+        document.getElementById('page-title').innerHTML = `Search: <span class="text-white">"${searchQuery}"</span>`;
+        document.getElementById('page-desc').textContent = '';
+      } else {
+        clearBtn.classList.add('hidden');
+        document.getElementById('page-title').textContent = 'The Archives';
+        document.getElementById('page-desc').textContent = 'Our complete collection of investigative reports and deep dives.';
+      }
+      render();
+    }
+
+    document.getElementById('search-btn').addEventListener('click', () => {
+      doSearch(document.getElementById('search-input').value);
+    });
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doSearch(e.target.value);
+    });
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      document.getElementById('search-input').value = '';
+      doSearch('');
+    });
+
+    document.getElementById('load-more-btn').addEventListener('click', () => {
+      displayedCount += PAGE_SIZE;
+      render();
+      window.scrollBy({ top: 200, behavior: 'smooth' });
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlSearch = urlParams.get('search') || '';
+      if (urlSearch) {
+        document.getElementById('search-input').value = urlSearch;
+      }
+
+      try {
+        const data = await fetchAPI('/articles?limit=100');
+        allArticles = data.articles || [];
+        displayedCount = PAGE_SIZE;
+        searchQuery = urlSearch;
+
+        buildTagFilters(allArticles);
+
+        if (urlSearch) {
+          document.getElementById('clear-btn').classList.remove('hidden');
+          document.getElementById('page-title').innerHTML = `Search: <span class="text-white">"${urlSearch}"</span>`;
+          document.getElementById('page-desc').textContent = '';
+        }
+
+        render();
+      } catch(err) {
+        document.getElementById('articles-container').innerHTML =
+          '<p class="col-span-full text-center text-white font-bold py-8">Failed to load articles. Make sure the backend is running.</p>';
+      }
+    });
+  </script>
+</body>
+</html>

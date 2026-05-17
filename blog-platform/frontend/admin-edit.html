@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Article - The AI Bulletin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        gray: {
+          950: '#020202',
+          900: '#070707',
+          850: '#0a0a0a',
+          800: '#101010',
+          750: '#151515',
+          700: '#181818',
+          600: '#222222',
+          500: '#444444',
+          400: '#8c8c8c',
+          300: '#c8c8c8',
+          200: '#e1e1e1',
+          100: '#f5f5f5'
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Outfit', 'sans-serif']
+      }
+    }
+  }
+}
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-black text-gray-100 font-sans antialiased pt-16">
+  
+  <nav class="fixed w-full top-0 left-0 z-50 bg-black/70 backdrop-blur-xl border-b border-neutral-900 shadow-xl shadow-black/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center gap-6">
+        <div class="flex items-center gap-10 shrink-0">
+          <a href="index.html" class="flex items-center gap-2 group">
+            <span class="text-xl sm:text-2xl font-black logo-brand tracking-widest uppercase text-white transition-colors duration-300">THE AI <span class="text-orange-500">BULLETIN</span></span>
+            <span class="bg-orange-500/10 text-orange-500 text-[9px] uppercase font-black tracking-widest px-2 py-0.5 rounded border border-orange-500/20 self-center">Admin</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="admin.html" class="text-xs font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Dashboard</a>
+          <button onclick="logout()" class="text-xs font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="min-h-screen py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 fade-in-up">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-800">
+      <h1 id="page-title" class="text-4xl font-serif font-black text-white uppercase tracking-tight">New Report</h1>
+    </div>
+    
+    <div id="error-msg" class="hidden bg-black border-l-4 border-gray-700 text-gray-400 p-4 mb-8 font-serif"></div>
+
+    <form id="edit-form" class="space-y-8">
+      <div class="border border-gray-800 p-8 space-y-6 bg-black shadow-sm">
+        <h2 class="text-xl font-serif font-black text-white border-b border-gray-800 pb-2 uppercase tracking-wide">Basic Info</h2>
+        <div>
+          <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Title *</label>
+          <input type="text" id="title" required class="input-field text-sm font-sans" placeholder="Headline...">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Content (HTML/Text) *</label>
+          <textarea id="content" required rows="15" class="input-field text-sm font-sans leading-relaxed" placeholder="Write report content..."></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Featured Image URL</label>
+          <input type="url" id="image" class="input-field text-sm font-sans" placeholder="https://...">
+        </div>
+      </div>
+
+      <div class="border border-gray-800 p-8 space-y-6 bg-black shadow-sm">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+          <h2 class="text-xl font-serif font-black text-white uppercase tracking-wide">SEO & Metadata</h2>
+          <button type="button" id="ai-generate-btn" class="bg-gray-900 rounded text-white font-bold px-4 py-2 text-xs uppercase tracking-wide hover:bg-gray-700 transition-colors">
+            Auto-Generate with AI
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Meta Title</label>
+            <input type="text" id="metaTitle" class="input-field text-sm font-sans">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Tags (comma separated)</label>
+            <input type="text" id="tags" class="input-field text-sm font-sans">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Meta Description</label>
+          <textarea id="metaDescription" rows="3" class="input-field text-sm font-sans"></textarea>
+        </div>
+      </div>
+
+      <div class="border border-gray-800 p-8 flex items-center justify-between bg-black shadow-sm">
+        <label class="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" id="published" class="w-5 h-5 border-gray-700 text-white focus:ring-gray-500">
+          <span class="text-white font-bold uppercase tracking-wide">Publish immediately</span>
+        </label>
+        <button type="submit" id="save-btn" class="btn-primary flex items-center gap-2 text-lg px-8 py-3">Save Report</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if (!getToken()) window.location.href = 'admin-login.html';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const isEdit = !!id;
+
+    if (isEdit) {
+      document.getElementById('page-title').textContent = 'Edit Report';
+      document.getElementById('save-btn').textContent = 'Update Report';
+
+      (async () => {
+        try {
+          const articles = await fetchAPI('/articles/admin/all');
+          const article = articles.find(a => a._id === id);
+          if (article) {
+            document.getElementById('title').value = article.title;
+            document.getElementById('content').value = article.content;
+            document.getElementById('image').value = article.image || '';
+            document.getElementById('metaTitle').value = article.metaTitle || '';
+            document.getElementById('metaDescription').value = article.metaDescription || '';
+            document.getElementById('tags').value = (article.tags || []).join(', ');
+            document.getElementById('published').checked = article.published;
+          }
+        } catch (err) {
+          await showPopup('Error', 'Failed to fetch article data.');
+        }
+      })();
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const confirmed = await showPopup('Save Report', 'Are you sure you want to save this report?', true);
+      if (!confirmed) {
+        return;
+      }
+
+      const errorMsg = document.getElementById('error-msg');
+      const saveBtn = document.getElementById('save-btn');
+      errorMsg.classList.add('hidden');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const payload = {
+        title: document.getElementById('title').value,
+        content: document.getElementById('content').value,
+        image: document.getElementById('image').value,
+        metaTitle: document.getElementById('metaTitle').value,
+        metaDescription: document.getElementById('metaDescription').value,
+        tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(Boolean),
+        published: document.getElementById('published').checked
+      };
+
+      try {
+        if (isEdit) {
+          await fetchAPI(`/articles/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+        } else {
+          await fetchAPI('/articles', { method: 'POST', body: JSON.stringify(payload) });
+        }
+        window.location.href = 'admin.html';
+      } catch (err) {
+        errorMsg.textContent = err.error || err.message || 'Something went wrong';
+        errorMsg.classList.remove('hidden');
+        saveBtn.disabled = false;
+        saveBtn.textContent = isEdit ? 'Update Report' : 'Save Report';
+      }
+    });
+
+    document.getElementById('ai-generate-btn').addEventListener('click', async (e) => {
+      const btn = e.target;
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      
+      if (!title || !content) {
+        await showPopup('Missing Info', 'Please provide a title and content first.');
+        return;
+      }
+      
+      btn.textContent = 'Generating...';
+      try {
+        const data = await fetchAPI('/articles/seo/generate', {
+          method: 'POST',
+          body: JSON.stringify({ title, content })
+        });
+        document.getElementById('metaTitle').value = data.metaTitle;
+        document.getElementById('metaDescription').value = data.metaDescription;
+        document.getElementById('tags').value = data.tags.join(', ');
+      } catch (err) {
+        await showPopup('Error', 'AI generation failed. Please try again later.');
+      } finally {
+        btn.textContent = 'Auto-Generate with AI';
+      }
+    });
+  </script>
+</body>
+</html>

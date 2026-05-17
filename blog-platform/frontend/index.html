@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The AI Bulletin - Tech & AI Briefing</title>
+  <meta name="description" content="The latest tech and AI news for developers and engineers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gray: {
+              950: '#020202',
+              900: '#070707',
+              850: '#0a0a0a',
+              800: '#101010',
+              750: '#151515',
+              700: '#181818',
+              600: '#222222',
+              500: '#444444',
+              400: '#8c8c8c',
+              300: '#c8c8c8',
+              200: '#e1e1e1',
+              100: '#f5f5f5'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Outfit', 'sans-serif']
+          }
+        }
+      }
+    }</script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card-hover {
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ticker-wrap {
+      overflow: hidden;
+      background: #f97316;
+    }
+
+    .ticker {
+      display: flex;
+      animation: ticker 28s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes ticker {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 3px solid #000;
+      margin: 0;
+    }
+
+    .lead-story-img {
+      transition: filter 0.4s ease;
+    }
+
+    .tag-pill {
+      background: #f97316;
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      display: inline-block;
+      border-radius: 0.25rem;
+    }
+  </style>
+</head>
+
+<body class="bg-black text-gray-100 font-sans antialiased pt-16">
+
+  <div class="ticker-wrap py-2">
+    <div class="ticker text-white text-xs font-bold uppercase tracking-wider">
+      <span id="ticker-left" class="flex gap-12 pr-12"></span>
+      <span id="ticker-right" class="flex gap-12 pr-12"></span>
+    </div>
+  </div>
+
+  <nav class="fixed w-full top-0 left-0 z-50 bg-black/70 backdrop-blur-xl border-b border-neutral-900 shadow-xl shadow-black/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center gap-6">
+        <div class="flex items-center gap-10 shrink-0">
+          <a href="index.html" class="flex items-center gap-2 group">
+            <span class="text-xl sm:text-2xl font-black logo-brand tracking-widest uppercase text-white transition-colors duration-300">THE AI <span class="text-orange-500">BULLETIN</span></span>
+          </a>
+          <div class="hidden md:flex items-center gap-8 text-xs font-black uppercase tracking-widest text-neutral-400">
+            <a href="index.html" class="hover:text-orange-500 hover:scale-[1.02] active:scale-[0.98] transition-all">Front Page</a>
+            <a href="articles.html" class="hover:text-orange-500 hover:scale-[1.02] active:scale-[0.98] transition-all">Archives</a>
+          </div>
+        </div>
+        <form class="search-form flex-1 max-w-md hidden lg:block" action="articles.html" method="GET">
+          <div class="relative">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" fill="none"
+              stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input type="text" name="search" placeholder="Search archives..."
+              class="w-full bg-neutral-950/60 border border-neutral-900 focus:border-orange-500/80 focus:ring-1 focus:ring-orange-500 pl-11 pr-4 py-2 text-xs outline-none transition-all text-white placeholder-neutral-500 rounded font-sans">
+          </div>
+        </form>
+        <div class="flex items-center gap-4">
+          <div id="nav-auth-links" class="hidden sm:flex items-center gap-4"></div>
+          <button id="mobile-menu-btn"
+            class="lg:hidden w-10 h-10 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-900/50 rounded transition-all active:scale-[0.95]">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden border-t border-neutral-900 bg-neutral-950/95 backdrop-blur-lg px-4 py-6 space-y-4">
+      <form class="search-form relative" action="articles.html" method="GET">
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" name="search" placeholder="Search..." class="w-full bg-black border border-neutral-900 text-white placeholder-neutral-500 pl-11 pr-4 py-2.5 text-xs outline-none transition-all focus:border-orange-500 rounded font-sans">
+      </form>
+      <div class="flex flex-col gap-1 font-black uppercase tracking-widest text-xs text-neutral-400">
+        <a href="index.html" class="hover:text-orange-500 transition-colors py-2.5 px-2 rounded hover:bg-neutral-900/50">Front Page</a>
+        <a href="articles.html" class="hover:text-orange-500 transition-colors py-2.5 px-2 rounded hover:bg-neutral-900/50">Archives</a>
+        <div id="mobile-auth-links" class="flex flex-col gap-2 pt-2 border-t border-neutral-900"></div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div id="hero-container" class="grid grid-cols-1 lg:grid-cols-3 gap-0 lg:gap-8">
+        
+        <div id="lead-story"
+          class="lg:col-span-2 border-b lg:border-b-0 lg:border-r border-gray-800 pb-8 lg:pb-0 lg:pr-8">
+          <div class="animate-pulse space-y-4">
+            <div class="h-72 bg-gray-800"></div>
+            <div class="h-8 bg-gray-800 w-3/4"></div>
+            <div class="h-4 bg-gray-800 w-full"></div>
+          </div>
+        </div>
+        
+        <div id="side-stories" class="flex flex-col gap-6 divide-y divide-gray-200 pt-8 lg:pt-0">
+          <div class="animate-pulse space-y-3">
+            <div class="h-4 bg-gray-800 w-full"></div>
+            <div class="h-4 bg-gray-800 w-2/3"></div>
+          </div>
+          <div class="animate-pulse space-y-3 pt-4">
+            <div class="h-4 bg-gray-800 w-full"></div>
+            <div class="h-4 bg-gray-800 w-2/3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 border-b border-gray-700 bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-gray-300">
+        <div>
+          <div class="text-3xl font-serif font-black text-white">10K+</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-500 mt-1">Student Readers</div>
+        </div>
+        <div>
+          <div class="text-3xl font-serif font-black text-white">50+</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-500 mt-1">Student Authors</div>
+        </div>
+        <div>
+          <div class="text-3xl font-serif font-black text-white">1k+</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-500 mt-1">Published Reports</div>
+        </div>
+        <div>
+          <div class="text-3xl font-serif font-black text-white">2026</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-500 mt-1">Established</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+      <div class="lg:col-span-2 space-y-14">
+
+        <section class="reveal">
+          <hr class="section-divider mb-3">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-serif font-black uppercase tracking-tight">Latest Reports</h2>
+            <a href="articles.html"
+              class="text-xs font-bold uppercase tracking-wider text-orange-600 hover:underline">View
+              All &rarr;</a>
+          </div>
+          <div id="latest-articles" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="col-span-full flex justify-center py-8">
+              <div class="w-8 h-8 border-2 border-gray-800 border-t-orange-500 animate-spin"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="category-section" class="reveal" style="transition-delay:0.1s">
+          <hr class="section-divider mb-3">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-serif font-black uppercase tracking-tight" id="category-title">Top Category</h2>
+          </div>
+          <div id="category-articles" class="space-y-6 divide-y divide-gray-100">
+            <div class="flex justify-center py-8">
+              <div class="w-8 h-8 border-2 border-gray-800 border-t-orange-500 animate-spin"></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <aside class="space-y-10">
+
+        <section class="reveal" style="transition-delay:0.2s">
+          <hr class="section-divider mb-3">
+          <h3 class="text-lg font-serif font-black uppercase tracking-tight mb-5">Must Reads</h3>
+          <ol id="must-reads" class="space-y-5">
+            <li class="animate-pulse">
+              <div class="h-4 bg-gray-800 w-full mb-2"></div>
+              <div class="h-4 bg-gray-800 w-2/3"></div>
+            </li>
+            <li class="animate-pulse">
+              <div class="h-4 bg-gray-800 w-full mb-2"></div>
+              <div class="h-4 bg-gray-800 w-2/3"></div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="reveal" style="transition-delay:0.25s">
+          <hr class="section-divider mb-3">
+          <h3 class="text-lg font-serif font-black uppercase tracking-tight mb-5">You May Also Like</h3>
+          <div id="suggested-content" class="space-y-5"></div>
+        </section>
+
+        <section class="reveal bg-black border border-gray-800 p-6" style="transition-delay:0.3s">
+          <h3 class="text-lg font-serif font-black uppercase tracking-tight mb-2">Daily Brief</h3>
+          <p class="text-sm text-gray-400 font-serif mb-5 leading-relaxed">Top stories delivered to your inbox every
+            morning.</p>
+          <form
+            onsubmit="event.preventDefault(); showPopup('Subscription Success', 'Thank you! You have been successfully subscribed to The AI Bulletin Daily Brief.', false); this.reset();"
+            class="space-y-3">
+            <input type="email" placeholder="your@email.com"
+              class="w-full bg-neutral-950 border border-neutral-800 text-white placeholder-neutral-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 px-4 py-2.5 text-sm outline-none transition-all font-sans rounded"
+              required>
+            <button
+              class="w-full bg-orange-500 text-black hover:bg-orange-600 active:scale-[0.98] text-xs font-bold uppercase tracking-widest py-2.5 transition-all font-sans rounded">Subscribe
+              Free</button>
+          </form>
+        </section>
+
+        <section class="reveal" style="transition-delay:0.35s">
+          <hr class="section-divider mb-3">
+          <h3 class="text-lg font-serif font-black uppercase tracking-tight mb-5">Topics</h3>
+          <div id="tags-cloud" class="flex flex-wrap gap-2"></div>
+        </section>
+
+      </aside>
+    </div>
+  </div>
+
+  <section class="border-t border-gray-800 bg-black py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-serif font-black uppercase tracking-tight">More From The Archives</h2>
+        <a href="articles.html" class="text-xs font-bold uppercase tracking-wider text-orange-600 hover:underline">All
+          Reports &rarr;</a>
+      </div>
+      <div id="more-articles" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="col-span-full flex justify-center py-8">
+          <div class="w-8 h-8 border-2 border-gray-800 border-t-orange-500 animate-spin"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-black text-white pt-12 pb-0 border-t border-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <div class="text-2xl logo-brand mb-3 text-white">THE AI <span class="text-orange-500">BULLETIN</span></div>
+        <p class="text-gray-400 text-sm leading-relaxed">The latest tech and AI news for developers and engineers.
+          Curated by students.</p>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Navigate</h4>
+        <div class="space-y-2 text-sm">
+          <a href="index.html" class="block text-gray-300 hover:text-white">Front Page</a>
+          <a href="articles.html" class="block text-gray-300 hover:text-white">All Stories</a>
+          <a href="admin-login.html" class="block text-gray-300 hover:text-white">Admin Portal</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">About</h4>
+        <p class="text-gray-400 text-sm leading-relaxed">The AI Bulletin is a platform for students to stay updated on
+          the
+          latest trends in technology and Artificial Intelligence.</p>
+      </div>
+    </div>
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pt-6 border-t border-gray-800 text-xs text-gray-500 flex justify-between items-center">
+      <span>&copy; 2026 The AI Bulletin. All rights reserved.</span>
+      <span>Built with integrity.</span>
+    </div>
+
+    <div class="relative w-full flex flex-col items-center justify-center bg-black">
+      <div class="relative w-full select-none leading-none flex justify-center">
+        <svg viewBox="0 0 1200 150" class="w-full max-w-7xl mx-auto h-auto uppercase">
+          <text x="50%" y="130" text-anchor="middle" font-size="140" font-family="'Syncopate', sans-serif"
+            font-weight="900" fill="none" stroke-width="0.7" textLength="1200" lengthAdjust="spacingAndGlyphs">
+            <tspan stroke="#f97316" fill="#f97316">AI </tspan>
+            <tspan stroke="#f97316">BULLETIN</tspan>
+          </text>
+        </svg>
+      </div>
+
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    function articleCard(article) {
+      const fallback = "this.style.display='none';this.nextElementSibling.style.display='flex'";
+      const tag = article.tags?.[0] || 'News';
+      const desc = article.metaDescription || '';
+      return `
+      <a href="article.html?slug=${article.slug}" class="block group card-hover">
+        <div class="flex flex-col h-full border border-gray-800 bg-black group-hover:border-gray-800 transition-colors">
+          <div class="relative h-44 overflow-hidden border-b border-gray-800">
+            ${article.image
+          ? `<img src="${article.image}" loading="lazy" onerror="${fallback}" class="w-full h-full object-cover transition-all duration-500">
+                 <div class="hidden w-full h-full bg-gray-800 items-center justify-center text-xs text-gray-400 font-bold uppercase tracking-wider">No Image</div>`
+          : `<div class="w-full h-full bg-gray-800 flex items-center justify-center text-xs text-gray-400 font-bold uppercase tracking-wider">No Image</div>`
+        }
+            <span class="tag-pill absolute top-3 left-3">${tag}</span>
+          </div>
+          <div class="p-5 flex flex-col flex-grow">
+            <h3 class="font-serif font-bold text-white text-lg leading-snug mb-2 line-clamp-3 group-hover:text-orange-700 transition-colors">${article.title}</h3>
+            <p class="text-gray-500 text-sm font-serif line-clamp-2 flex-grow leading-relaxed">${desc}</p>
+            <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-800 text-xs font-bold uppercase tracking-wider text-gray-400">
+              <span>${formatDate(article.createdAt)}</span>
+              <span>${article.readingTime} min</span>
+            </div>
+          </div>
+        </div>
+      </a>`;
+    }
+
+    function sideArticle(article) {
+      const tag = article.tags?.[0] || 'News';
+      const fallback = "this.style.display='none';this.nextElementSibling.style.display='flex'";
+      return `
+      <a href="article.html?slug=${article.slug}" class="flex gap-4 pt-5 first:pt-0 group">
+        <div class="w-20 h-16 shrink-0 overflow-hidden bg-gray-800">
+          ${article.image
+          ? `<img src="${article.image}" loading="lazy" onerror="${fallback}" class="w-full h-full object-cover transition-all duration-300">
+               <div class="hidden w-full h-full bg-gray-800"></div>`
+          : `<div class="w-full h-full bg-gray-800"></div>`
+        }
+        </div>
+        <div>
+          <span class="tag-pill inline-block mb-1">${tag}</span>
+          <h4 class="font-serif font-bold text-sm text-white leading-snug line-clamp-3 group-hover:text-orange-700 transition-colors">${article.title}</h4>
+        </div>
+      </a>`;
+    }
+
+    function listItem(num, article) {
+      return `
+      <li class="flex gap-3 items-start">
+        <span class="text-4xl font-serif font-black text-orange-500 leading-none">${num}</span>
+        <a href="article.html?slug=${article.slug}" class="font-serif font-bold text-sm text-white hover:text-orange-700 transition-colors leading-snug">${article.title}</a>
+      </li>`;
+    }
+
+    function miniCard(article) {
+      const fallback = "this.style.display='none';this.nextElementSibling.style.display='flex'";
+      return `
+      <a href="article.html?slug=${article.slug}" class="block group card-hover border border-gray-800 bg-black hover:border-gray-800 transition-colors">
+        <div class="h-32 overflow-hidden border-b border-gray-800">
+          ${article.image
+          ? `<img src="${article.image}" loading="lazy" onerror="${fallback}" class="w-full h-full object-cover transition-all duration-400">
+               <div class="hidden w-full h-full bg-gray-800"></div>`
+          : `<div class="w-full h-full bg-gray-800"></div>`
+        }
+        </div>
+        <div class="p-4">
+          <span class="tag-pill inline-block mb-2">${article.tags?.[0] || 'News'}</span>
+          <h4 class="font-serif font-bold text-sm text-white leading-snug line-clamp-2 group-hover:text-orange-700 transition-colors">${article.title}</h4>
+          <p class="text-xs text-gray-400 mt-2 font-bold uppercase tracking-wider">${formatDate(article.createdAt)}</p>
+        </div>
+      </a>`;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const data = await fetchAPI('/articles?limit=20');
+        const articles = data.articles || [];
+
+        if (!articles.length) {
+          document.getElementById('ticker-left').innerHTML = '<span class="px-6">No news alerts available.</span>';
+          document.getElementById('ticker-right').innerHTML = '<span class="px-6">No news alerts available.</span>';
+          document.getElementById('lead-story').innerHTML = '<p class="text-gray-400 font-serif">Stay tuned! We are compiling the latest tech stories.</p>';
+          document.getElementById('side-stories').innerHTML = '<p class="text-gray-500 text-sm font-serif">No secondary reports.</p>';
+          document.getElementById('latest-articles').innerHTML = '<p class="col-span-full text-center text-gray-500 font-bold py-8">No reports published yet.</p>';
+          document.getElementById('category-articles').innerHTML = '<p class="text-gray-500 text-sm font-serif">No categorized stories.</p>';
+          document.getElementById('must-reads').innerHTML = '<li class="text-gray-500 text-sm font-serif">No recommended reading.</li>';
+          document.getElementById('suggested-content').innerHTML = '<p class="text-gray-500 text-sm font-serif">No suggestions.</p>';
+          document.getElementById('tags-cloud').innerHTML = '<span class="text-xs text-gray-500 font-bold uppercase tracking-wider">No topics available</span>';
+          document.getElementById('more-articles').innerHTML = '<p class="col-span-full text-center text-gray-500 font-bold py-8">No archived records.</p>';
+
+          document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+          return;
+        }
+
+        const tickerItems = articles.map(a => `<span class="px-6">&bull; ${a.title}</span>`).join('');
+        document.getElementById('ticker-left').innerHTML = tickerItems;
+        document.getElementById('ticker-right').innerHTML = tickerItems;
+
+        const lead = articles[0];
+        const fallback = "this.style.display='none';this.nextElementSibling.style.display='flex'";
+        document.getElementById('lead-story').innerHTML = `
+        <a href="article.html?slug=${lead.slug}" class="block group">
+          <div class="relative h-72 md:h-96 overflow-hidden mb-5 border border-gray-800">
+            ${lead.image
+            ? `<img src="${lead.image}" class="w-full h-full object-cover lead-story-img" onerror="${fallback}">
+                 <div class="hidden w-full h-full bg-gray-800 flex items-center justify-center text-xs text-gray-400 font-bold uppercase">No Image</div>`
+            : `<div class="w-full h-full bg-gray-800 flex items-center justify-center text-xs text-gray-400 font-bold uppercase">No Image</div>`
+          }
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+              <span class="tag-pill mb-2 inline-block">${lead.tags?.[0] || 'Top Story'}</span>
+            </div>
+          </div>
+          <h2 class="font-serif font-black text-3xl md:text-4xl leading-tight text-white group-hover:text-orange-700 transition-colors mb-3">${lead.title}</h2>
+          <p class="text-gray-400 font-serif leading-relaxed line-clamp-3">${lead.metaDescription || ''}</p>
+          <div class="mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">${formatDate(lead.createdAt)} &bull; ${lead.readingTime} min read</div>
+        </a>`;
+
+        document.getElementById('side-stories').innerHTML = articles.slice(1, 4).length
+          ? articles.slice(1, 4).map(a => sideArticle(a)).join('')
+          : '<p class="text-gray-500 text-sm font-serif">No secondary reports.</p>';
+
+        document.getElementById('latest-articles').innerHTML = articles.slice(0, 4).map(a => articleCard(a)).join('');
+
+        const tagMap = {};
+        articles.forEach(a => { const t = a.tags?.[0]; if (t) { if (!tagMap[t]) tagMap[t] = []; tagMap[t].push(a); } });
+        const topTag = Object.entries(tagMap).sort((a, b) => b[1].length - a[1].length)[0];
+        if (topTag) {
+          document.getElementById('category-title').textContent = topTag[0].toUpperCase();
+          document.getElementById('category-articles').innerHTML = topTag[1].slice(0, 4).map(a => `
+          <a href="article.html?slug=${a.slug}" class="flex gap-5 py-5 first:pt-0 group border-b border-gray-800 last:border-0">
+            <div class="flex-1">
+              <span class="tag-pill mb-2 inline-block">${a.tags?.[0] || 'News'}</span>
+              <h4 class="font-serif font-bold text-base text-white leading-snug line-clamp-2 group-hover:text-orange-700 transition-colors">${a.title}</h4>
+              <p class="text-sm text-gray-500 mt-1 font-serif line-clamp-2">${a.metaDescription || ''}</p>
+              <div class="mt-2 text-xs font-bold uppercase tracking-wider text-gray-400">${formatDate(a.createdAt)} &bull; ${a.readingTime} min</div>
+            </div>
+            ${a.image ? `<div class="w-28 h-20 shrink-0 overflow-hidden border border-gray-800"><img src="${a.image}" class="w-full h-full object-cover transition-all duration-300" onerror="this.style.display='none'"></div>` : ''}
+          </a>`).join('');
+        } else {
+          document.getElementById('category-title').textContent = 'Top Category';
+          document.getElementById('category-articles').innerHTML = '<p class="text-gray-500 text-sm font-serif">No categorized stories.</p>';
+        }
+
+        document.getElementById('must-reads').innerHTML = articles.slice(0, 5).map((a, i) => listItem(i + 1, a)).join('');
+
+        const suggestedList = articles.length > 4 ? articles.slice(4, 8) : articles;
+        document.getElementById('suggested-content').innerHTML = suggestedList.map(a => sideArticle(a)).join('');
+
+        const allTags = [...new Set(articles.flatMap(a => a.tags || []))].slice(0, 16);
+        document.getElementById('tags-cloud').innerHTML = allTags.length
+          ? allTags.map(t => `
+            <a href="articles.html?search=${encodeURIComponent(t)}" class="text-xs font-bold uppercase tracking-wider border border-gray-700 px-3 py-1 hover:bg-black hover:text-white hover:border-gray-800 transition-colors">${t}</a>`).join('')
+          : '<span class="text-xs text-gray-500 font-bold uppercase tracking-wider">No topics available</span>';
+
+        const moreList = articles.length > 4 ? articles.slice(4, 12) : articles;
+        document.getElementById('more-articles').innerHTML = moreList.map(a => miniCard(a)).join('');
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('ticker-left').innerHTML = '<span class="px-6">Unable to connect to The AI Bulletin feed.</span>';
+        document.getElementById('ticker-right').innerHTML = '<span class="px-6">Unable to connect to The AI Bulletin feed.</span>';
+        document.getElementById('lead-story').innerHTML = '<p class="text-white font-bold py-4">Failed to load articles. Make sure the backend server is running.</p>';
+        document.getElementById('side-stories').innerHTML = '';
+        document.getElementById('latest-articles').innerHTML = '<p class="col-span-full text-center text-white font-bold py-8">Failed to connect to server.</p>';
+        document.getElementById('category-articles').innerHTML = '';
+        document.getElementById('must-reads').innerHTML = '<li class="text-white">Failed to load recommendations.</li>';
+        document.getElementById('suggested-content').innerHTML = '';
+        document.getElementById('more-articles').innerHTML = '<p class="col-span-full text-center text-white font-bold py-8">Failed to load archived records.</p>';
+
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      }
+    });
+  </script>
+</body>
+
+</html>
