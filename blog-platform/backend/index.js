@@ -30,10 +30,7 @@ app.use("/api/articles", articleRoutes);
 
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/api")) {
-    return next();
-  }
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
