@@ -28,6 +28,11 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
 
+// API 404 handler - ensures any unmatched API route returns a proper JSON 404 error
+app.use("/api", (req, res) => {
+  res.status(404).json({ message: `API endpoint not found: ${req.method} ${req.originalUrl}` });
+});
+
 app.use(express.static(path.join(__dirname, "../frontend"), {
   extensions: ["html", "htm"]
 }));
