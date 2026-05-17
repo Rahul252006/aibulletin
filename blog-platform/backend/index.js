@@ -28,11 +28,22 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
 
-app.use(express.static(path.join(__dirname, "../frontend")));
+app.use(express.static(path.join(__dirname, "../frontend"), {
+  extensions: ["html", "htm"]
+}));
 
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+app.get("{*path}", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
+  // Fall back to index.html only for page navigations (requests accepting HTML)
+  // For missing JS/CSS/images/etc., fall through to return a clean 404 and prevent 'Unexpected token' syntax errors in the browser.
+  if (req.accepts("html")) {
+    return res.sendFile(path.join(__dirname, "../frontend/index.html"));
+  }
+  next();
 });
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
