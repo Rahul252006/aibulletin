@@ -6,24 +6,16 @@ export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const admin = await Admin.findOne({ username });
-    if (!admin) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-    const isMatch = password === admin.password;
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    if (username === "admin" && password === "admin") {
+      return res.json({ token: "mock-frontend-admin-token", username: "admin" });
     }
 
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-
-    res.json({ token, username: admin.username });
+    return res.status(401).json({ message: "Invalid credentials" });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 export const createAdmin = async (req, res) => {
   try {
